@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UTS Algoritma 1 - Penentuan Nilai & Kelulusan</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 720px; margin: 30px auto; padding: 20px; background: #f4f6f9; }
+    .card { background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    input, button { padding: 10px; font-size: 16px; margin-top: 8px; }
+    input { width: 65%; border: 1px solid #ccc; border-radius: 4px; }
+    button { width: 30%; background: #2563eb; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #1d4ed8; }
+    pre { background: #1e293b; color: #f8fafc; padding: 16px; border-radius: 6px; white-space: pre-wrap; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Sistem Penentuan Nilai & Kelulusan Mahasiswa</h2>
+    <label for="npmInput">Masukkan NPM Mahasiswa:</label><br />
+    <input type="text" id="npmInput" value="26612091075" placeholder="Contoh: 24101140045" />
+    <button onclick="prosesKelulusan()">Proses Nilai</button>
+
+    <h3>Output Program:</h3>
+    <pre id="output">Masukkan NPM lalu klik tombol "Proses Nilai".</pre>
+  </div>
+
+  <script>
+    // g. Algoritma Pencarian (Linear Search) menggunakan perulangan FOR
+    function linearSearch(arr, target) {
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i] === target) {
+          return i; // Mengembalikan posisi indeks jika ditemukan
+        }
+      }
+      return -1;
+    }
+
+    // h. Algoritma Pengurutan (Bubble Sort) menggunakan perulangan FOR bersarang
+    function bubbleSort(arr) {
+      let hasil = [...arr]; // Menyalin array agar data awal tetap utuh
+      let n = hasil.length;
+
+      for (let i = 0; i < n - 1; i++) {
+        for (let j = 0; j < n - i - 1; j++) {
+          if (hasil[j] > hasil[j + 1]) {
+            let temp = hasil[j];
+            hasil[j] = hasil[j + 1];
+            hasil[j + 1] = temp;
+          }
+        }
+      }
+      return hasil;
+    }
+
+    function prosesKelulusan() {
+      const npm = document.getElementById("npmInput").value.trim();
+      const outputEl = document.getElementById("output");
+
+      // Validasi input menggunakan Operator Logika (! dan ||)
+      if (!npm || npm.length < 2 || isNaN(npm)) {
+        outputEl.textContent = "Error: Masukkan NPM berupa angka minimal 2 digit!";
+        return;
+      }
+
+      // Mengambil 2 digit terakhir NPM sebagai nilai IP awal
+      const nilaiAwal = parseInt(npm.slice(-2), 10);
+
+      // a. Operator Aritmatika (%) & c. Operator Perbandingan (===)
+      const sisaBagi = nilaiAwal % 2;
+
+      // b. Operator Logika (&&), c. Operator Perbandingan (>=, <), d. Percabangan (if-else)
+      let grade = "";
+      let keterangan = "";
+
+      if (nilaiAwal >= 90) {
+        grade = "A";
+        keterangan = "Lulus nilai terbaik";
+      } else if (nilaiAwal >= 80 && nilaiAwal < 90) {
+        grade = "B";
+        keterangan = "Lulus";
+      } else if (nilaiAwal >= 60 && nilaiAwal < 80) {
+        grade = "C";
+        keterangan = "Lulus ala kadarnya";
+      } else if (nilaiAwal >= 40 && nilaiAwal < 60) {
+        grade = "D";
+        keterangan = "Perlu Diperbaiki";
+      } else {
+        grade = "E";
+        keterangan = "Tidak Lulus";
+      }
+
+      // f. Array untuk mencatat riwayat nilai saat proses remedial
+      let riwayatRemedial = [nilaiAwal];
+      let nilaiAkhir = nilaiAwal;
+      let prosesRemedialText = "";
+
+      // d. Percabangan (if-else) & b. Operator Logika (||) untuk mengecek syarat remedial
+      if (grade === "D" || grade === "E") {
+        let tahap = 1;
+        // e. Perulangan (while) menambah 10 poin sampai nilai minimal 60 tercapai
+        while (nilaiAkhir < 60) {
+          nilaiAkhir = nilaiAkhir + 10; // a. Operator Aritmatika (+)
+          riwayatRemedial.push(nilaiAkhir);
+          prosesRemedialText += `  - Remedial ke-${tahap}: nilai menjadi ${nilaiAkhir}\n`;
+          tahap++;
+        }
+      } else {
+        prosesRemedialText = "  - Tidak perlu mengikuti remedial.\n";
+      }
+
+      // f. Array kumpulan data nilai untuk diproses algoritma Searching / Sorting
+      let dataNilaiKelas = [55, 88, 62, 95, 50, 81, nilaiAwal];
+      let hasilAlgoritmaText = "";
+
+      // d. Percabangan (if-else) penentuan algoritma berdasarkan IP awal sebelum remedial
+      if (sisaBagi !== 0) {
+        // GANJIL -> Gunakan Algoritma Pencarian (Searching)
+        const indeks = linearSearch(dataNilaiKelas, nilaiAwal);
+        hasilAlgoritmaText =
+          `Status IP Awal    : GANJIL (${nilaiAwal})\n` +
+          `Algoritma Dipilih : Pencarian (Linear Search)\n` +
+          `Data Array        : [${dataNilaiKelas.join(", ")}]\n` +
+          `Hasil Pencarian   : Nilai ${nilaiAwal} ditemukan pada indeks ke-${indeks}`;
+      } else {
+        // GENAP -> Gunakan Algoritma Pengurutan (Sorting)
+        const dataTerurut = bubbleSort(dataNilaiKelas);
+        hasilAlgoritmaText =
+          `Status IP Awal    : GENAP (${nilaiAwal})\n` +
+          `Algoritma Dipilih : Pengurutan (Bubble Sort)\n` +
+          `Array Awal        : [${dataNilaiKelas.join(", ")}]\n` +
+          `Array Terurut     : [${dataTerurut.join(", ")}]`;
+      }
+
+      // Menampilkan hasil keseluruhan
+      outputEl.textContent =
+        `=== DATA & KELULUSAN MAHASISWA ===\n` +
+        `NPM               : ${npm}\n` +
+        `Nilai IP Awal     : ${nilaiAwal}\n` +
+        `Grade             : ${grade}\n` +
+        `Keterangan        : ${keterangan}\n\n` +
+        `=== PROSES REMEDIAL ===\n` +
+        `${prosesRemedialText}` +
+        `Riwayat Nilai     : [${riwayatRemedial.join(" -> ")}]\n` +
+        `Nilai Akhir       : ${nilaiAkhir}\n\n` +
+        `=== HASIL ALGORITMA ===\n` +
+        `${hasilAlgoritmaText}`;
+    }
+  </script>
+</body>
+</html>
